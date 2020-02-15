@@ -62,9 +62,20 @@ class Paginator
                 $this->return .= ($i == $this->current_page) ? "<a class=\"current\" href=\"#\">$i</a> " : "<a class=\"paginate\" href=\"" . $this->url_next . $i . "\">$i</a> ";
             }
         }
-        $this->low = ($this->current_page - 1) * $this->items_per_page;
-        $this->high = ($_GET['ipp'] == 'All') ? $this->items_total : ($this->current_page * $this->items_per_page) - 1;
-        $this->limit = ($_GET['ipp'] == 'All') ? "" : " LIMIT $this->low,$this->items_per_page";
+        //$this->low = ($this->current_page - 1) * $this->items_per_page;
+        //$this->high = ($_GET['ipp'] == 'All') ? $this->items_total : ($this->current_page * $this->items_per_page) - 1;
+        //$this->limit = ($_GET['ipp'] == 'All') ? "" : " LIMIT $this->low,$this->items_per_page";
+    }
+
+    function previous()
+    {
+        $current_page = $this->current_page;
+        $prev_page = $this->current_page - 1;
+        if ($current_page > 1) {
+            echo "<a class='paginate' href='".$this->url_next . $prev_page."'>ก่อนหน้า</a> ";
+        } else {
+            echo "<a class='current'>ก่อนหน้า</a> ";
+        }
     }
 
     function display_pages()
@@ -175,30 +186,16 @@ class Paginator
             <th width="198">
                 <div align="center">Email </div>
             </th>
-            <th width="97">
-                <div align="center">CountryCode </div>
-            </th>
-            <th width="59">
-                <div align="center">Budget </div>
-            </th>
-            <th width="71">
-                <div align="center">Used </div>
-            </th>
         </tr>
         <?php
         while ($objResult = mysqli_fetch_array($objQuery)) {
         ?>
             <tr>
                 <td>
-                    <div align="center"><?php echo $objResult["CustomerID"]; ?></div>
+                    <div align="center"><?php echo $objResult["cusid"]; ?></div>
                 </td>
-                <td><?php echo $objResult["Name"]; ?></td>
-                <td><?php echo $objResult["Email"]; ?></td>
-                <td>
-                    <div align="center"><?php echo $objResult["CountryCode"]; ?></div>
-                </td>
-                <td align="right"><?php echo $objResult["Budget"]; ?></td>
-                <td align="right"><?php echo $objResult["Used"]; ?></td>
+                <td><?php echo $objResult["cus_name"]; ?></td>
+                <td><?php echo $objResult["cus_email"]; ?></td>
             </tr>
         <?php
         }
@@ -216,11 +213,13 @@ class Paginator
     $pages->current_page = $Page;
     $pages->default_ipp = $Per_Page;
     $pages->url_next = $_SERVER["PHP_SELF"] . "?QueryString=value&Page=";
-
+    $pages->previous();
     $pages->paginate();
 
-    echo $pages->display_pages()
+    echo $pages->display_pages();
+
     ?>
+
 
     <?php
     mysqli_close($link);
